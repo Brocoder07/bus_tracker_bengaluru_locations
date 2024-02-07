@@ -1,28 +1,7 @@
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-
+import java.util.awt.*;
+import javax.swing.*;
 public class BusTrackingSimulationApp extends JFrame {
     private MapPanel mapPanel;
-
     public BusTrackingSimulationApp() {
         super("Bus Tracking Simulation");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -37,25 +16,22 @@ public class BusTrackingSimulationApp extends JFrame {
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         appPanel.add(titleLabel);
-
         appPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-
+        
         JLabel startLabel = new JLabel("Enter starting place:");
         appPanel.add(startLabel);
-
+        
         JTextField startTextField = new JTextField();
         appPanel.add(startTextField);
-
         appPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-
+        
         JLabel destinationLabel = new JLabel("Enter destination place:");
         appPanel.add(destinationLabel);
-
+        
         JTextField destinationTextField = new JTextField();
         appPanel.add(destinationTextField);
-
         appPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-
+        
         JButton trackButton = new JButton("Track Bus");
         trackButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         trackButton.addActionListener(new ActionListener() {
@@ -67,7 +43,6 @@ public class BusTrackingSimulationApp extends JFrame {
             }
         });
         appPanel.add(trackButton);
-
         add(appPanel, BorderLayout.NORTH);
 
         mapPanel = new MapPanel();
@@ -80,28 +55,23 @@ public class BusTrackingSimulationApp extends JFrame {
     private void simulateBusTracking(String startPlace, String destinationPlace) {
     startPlace = startPlace.toLowerCase();
     destinationPlace = destinationPlace.toLowerCase();
-
     if (startPlace.trim().isEmpty() || destinationPlace.trim().isEmpty()) {
         JOptionPane.showMessageDialog(this, "Please enter both starting and destination places.");
         return;
     }
-
-    // Check if source and destination are the same
     if (startPlace.equalsIgnoreCase(destinationPlace)) {
         JOptionPane.showMessageDialog(this, "Source and destination cannot be the same. Please enter different locations.");
         return;
     }
-
-    // Check if source and destination are valid Bengaluru locations
     if (!BengaluruLocation.isValidLocation(startPlace) || !BengaluruLocation.isValidLocation(destinationPlace)) {
         JOptionPane.showMessageDialog(this, "Invalid location. Please enter valid locations in Bengaluru city.");
         return;
     }
-
     mapPanel.startTrackingAnimation(startPlace, destinationPlace);
 }
+    
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new BusTrackingSimulationApp());
+        SwingUtilities.invokeLater(()->new BusTrackingSimulationApp());
     }
 }
 class MapPanel extends JPanel {
@@ -115,12 +85,10 @@ class MapPanel extends JPanel {
     public void startTrackingAnimation(String startPlace, String destinationPlace) {
         this.startPlace = startPlace;
         this.destinationPlace = destinationPlace;
-        this.currentX = 50; // Starting X position
-        this.endX = getWidth() - 50; // Ending X position
+        this.currentX = 50; 
+        this.endX = getWidth() - 50;
         this.estimatedTime = calculateEstimatedTime();
-
-        // Initialize timer for animation
-        timer = new Timer(1000, new ActionListener() { // Update every second
+        timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateObjectPosition();
@@ -128,55 +96,45 @@ class MapPanel extends JPanel {
         });
         timer.start();
     }
-
+    
     private double calculateEstimatedTime() {
         double distance = BengaluruLocation.getDistance(startPlace, destinationPlace);
-        double speed = 30.0; // Bus speed in km/h
+        double speed = 30.0;
         return distance / speed;
     }
-
+    
     private void updateObjectPosition() {
-        currentX += 5; // Move object by 5 pixels per second
-
-        // If the object reaches the destination, stop the timer
+        currentX += 5; 
         if (currentX >= endX) {
             timer.stop();
             displayArrivalMessage();
         } else {
             updateEstimatedTime();
         }
-
         repaint();
     }
 
     private void updateEstimatedTime() {
         double remainingDistance = endX - currentX;
-        estimatedTime = remainingDistance / 5 / 3600; // Recalculate estimated time in hours
+        estimatedTime = remainingDistance / 5 / 3600;
     }
 
     private void displayArrivalMessage() {
         JOptionPane.showMessageDialog(this, "You have arrived at your destination!");
-        estimatedTime = 0; // Reset estimated time after arrival
+        estimatedTime = 0;
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         if (startPlace != null && destinationPlace != null) {
             Graphics2D g2d = (Graphics2D) g;
-
             int startY = getHeight() / 2;
             int endY = getHeight() / 2;
-
-            // Draw starting and destination places
             drawBus(g2d, currentX, startY);
             drawDestination(g2d, startPlace, currentX, startY - 20);
-
             drawBus(g2d, endX, endY);
             drawDestination(g2d, destinationPlace, endX, endY - 20);
-
-            // Draw tracking line
             drawLine(g2d, currentX + 5, startY, endX - 5, endY);
             drawEstimatedTime(g2d, estimatedTime);
         }
