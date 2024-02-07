@@ -1,11 +1,8 @@
 import java.util.HashMap;
 import java.util.Map;
-
 class BengaluruLocation {
     private static final Map<String, BengaluruLocation> bengaluruLocations = new HashMap<>();
-    // Inside the static block in the BengaluruLocation class
 static {
-    // Add Bengaluru locations with their names and coordinates (latitude, longitude)
     bengaluruLocations.put("Majestic", new BengaluruLocation("Majestic", 12.9779, 77.5713));
     bengaluruLocations.put("Girinagar", new BengaluruLocation("Girinagar", 12.9417, 77.5466));
     bengaluruLocations.put("KR Market", new BengaluruLocation("KR Market", 12.9642, 77.5835));
@@ -36,7 +33,6 @@ static {
     bengaluruLocations.put("JP Nagar", new BengaluruLocation("JP Nagar", 12.9063, 77.5855));
     bengaluruLocations.put("Kumaraswamy Layout", new BengaluruLocation("Kumaraswamy Layout", 12.9098, 77.5568));
 }
-    
     private final String name;
     private final double latitude;
     private final double longitude;
@@ -59,22 +55,20 @@ public static boolean isValidLocation(String locationName) {
 public static double getDistance(String startLocation, String endLocation) {
         BengaluruLocation start = bengaluruLocations.get(startLocation.toLowerCase());
         BengaluruLocation end = bengaluruLocations.get(endLocation.toLowerCase());
-
-        if (start != null && end != null) {
+         if (start!= null && end!= null) {
             return haversine(start.latitude, start.longitude, end.latitude, end.longitude);
         } else {
-            return -1; // Invalid locations
+            return -1;
         }
     }
-
-    // Haversine formula to calculate distance between two coordinates on Earth
+    
     private static double haversine(double lat1, double lon1, double lat2, double lon2) {
-        double R = 6371; // Earth radius in kilometers
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(lat1))
-                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
+        double R = 6371;// Radius of Earth in kms
+        double dLat = Math.toRadians(lat2-lat1);
+        double dLon = Math.toRadians(lon2-lon1);
+        double a = Math.sin(dLat / 2)*Math.sin(dLat / 2) + Math.cos(Math.toRadians(lat1))
+                *Math.cos(Math.toRadians(lat2))*Math.sin(dLon / 2)*Math.sin(dLon / 2);
+        double c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R*c;
     }
 }
